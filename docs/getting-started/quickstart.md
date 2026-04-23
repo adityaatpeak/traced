@@ -1,89 +1,48 @@
 # Quick Start
 
-Get Traced running locally in 5 minutes with Docker Compose.
+Get Traced investigating incidents in your cluster in 3 steps.
 
-## Prerequisites
-
-- Docker and Docker Compose installed
-- An Anthropic API key ([console.anthropic.com](https://console.anthropic.com))
-
-## 1. Clone and Configure
+## Step 1: Install the Collector
 
 ```bash
-git clone https://github.com/traced-ai/traced.ai.git
-cd traced.ai
-cp .env.example .env
+kubectl create namespace traced
+kubectl apply -f https://traced.ai/install/rbac.yaml
+
+helm install traced-collector traced/collector \
+  --namespace traced \
+  --set collectorApiKey="<key-from-traced-team>" \
+  --set prometheus.url="http://prometheus-server.monitoring.svc:9090" \
+  --set elasticsearch.hosts="http://elasticsearch-master.logging.svc:9200"
 ```
 
-Edit `.env` and set at minimum:
+## Step 2: Verify
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-api03-...
+kubectl exec -n traced deploy/traced-collector -- curl -s localhost:8321/health
 ```
 
-!!! tip "Optional: Slack integration"
-    To enable the Slack bot, also set `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN`. See the [Setup Guide](setup-guide.md#2-create-a-slack-app) for how to create a Slack app.
+You should see `"prometheus": "connected"` and `"elasticsearch": "connected"`.
 
-## 2. Start the Stack
+## Step 3: Trigger your first investigation
 
-```bash
-docker-compose up --build
+In Slack, tag the bot:
+
+```
+@Traced payment-service is showing high latency — p99 above 3 seconds
 ```
 
-This starts four services:
-
-| Service | Port | Purpose |
-|---------|------|---------|
-| Collector | 8321 | Queries Prometheus, Elasticsearch, K8s |
-| Cloud | 8322 | AI agents, webhooks, incident API, dashboard |
-| Prometheus | 9090 | Dev metrics backend |
-| Elasticsearch | 9200 | Dev log backend |
-
-## 3. Verify
+Or via webhook:
 
 ```bash
-# Collector health — should show "connected" for Prometheus and ES
-curl http://localhost:8321/health | python3 -m json.tool
-
-# Cloud health
-curl http://localhost:8322/health | python3 -m json.tool
-```
-
-## 4. Trigger a Test Investigation
-
-```bash
-curl -X POST http://localhost:8322/webhooks/generic \
+curl -X POST https://cloud.traced.ai/webhooks/generic \
   -H "Content-Type: application/json" \
-  -d '{
-    "message": "OOMKilled in payment-service — pods restarting in namespace payments",
-    "source": "test",
-    "service": "payment-service",
-    "severity": "critical"
-  }'
+  -d '{"message": "High latency on payment-service", "service": "payment-service", "severity": "high"}'
 ```
 
-## 5. Check Results
+Traced will dispatch three specialist agents to investigate in parallel, synthesize a root cause, and post findings to Slack within 30 seconds.
 
-```bash
-# List all incidents
-curl http://localhost:8322/api/v1/incidents | python3 -m json.tool
+## What's Next
 
-# Or open the dashboard
-open http://localhost:8322/dashboard
-```
-
-## What Happens Behind the Scenes
-
-1. The webhook normalizes the alert into an `IncidentTrigger`
-2. The **oom_kill** runbook matches based on "OOMKilled" in the message
-3. Three agents investigate in parallel (observability, kubernetes, change detection)
-4. Each agent uses Claude to decide which tools to call (PromQL queries, log searches, pod inspection)
-5. Claude synthesizes all findings into a root cause with confidence score
-6. Remediation actions are suggested with safety tier classifications
-7. Everything is persisted and visible on the dashboard
-
-## Next Steps
-
-- [Full Setup Guide](setup-guide.md) — Connect to your real cluster
-- [Architecture Overview](../architecture/overview.md) — Understand how agents work
-- [Custom Runbooks](../configuration/runbooks.md) — Add playbooks for your incidents
+- [Full Setup Guide](setup-guide.md) — Detailed walkthrough with RBAC, connectivity testing, and troubleshooting
+- [How Investigations Work](first-investigation.md) — What happens under the hood
+- [Configure Alert Forwarding](setup-guide.md#10-configure-alert-forwarding) — Auto-trigger from PagerDuty or Alertmanager

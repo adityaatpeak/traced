@@ -2,40 +2,44 @@
 
 > From alert to root cause to fix, in minutes.
 
-Traced is a multi-agent AI system that investigates production incidents automatically. When an alert fires, Traced dispatches specialist agents to query your observability stack in parallel, synthesizes a root cause using Claude, and suggests remediation actions with safety-tiered approval via Slack.
+Traced is an AI-powered SRE platform that investigates production incidents automatically. When an alert fires, Traced dispatches specialist agents to query your metrics, logs, and cluster state in parallel, synthesizes a root cause, and suggests remediation actions with safety-tiered approval via Slack.
 
 ## How It Works
 
 ```mermaid
 graph LR
-    A[Alert Fires] --> B[Traced Cloud]
+    A[Alert Fires] -->|PagerDuty / Alertmanager| B[Traced Platform]
     B --> C[Observability Agent]
     B --> D[Kubernetes Agent]
     B --> E[Change Agent]
-    C --> F[Prometheus / ELK]
-    D --> G[K8s API]
-    E --> H[Deployments / ConfigMaps]
-    F --> I[Claude Synthesis]
+    C -->|via Collector| F[Your Prometheus & ELK]
+    D -->|via Collector| G[Your K8s API]
+    E -->|via Collector| H[Your Deployments]
+    F --> I[AI Root Cause Analysis]
     G --> I
     H --> I
-    I --> J[Root Cause + Fix]
+    I --> J[Findings + Suggested Fix]
     J --> K[Slack Approval]
     K --> L[Auto-Remediate]
-    L --> M[Verify Fix]
 ```
+
+## What You Deploy
+
+Only a **single lightweight component** — the Traced Collector — runs in your cluster. It acts as a read-only proxy to your Prometheus, Elasticsearch, and Kubernetes API. All AI processing happens on the Traced platform. Sensitive data is scrubbed before it leaves your cluster.
 
 ## Key Features
 
 - **Multi-agent investigation** — Three specialist agents query metrics, logs, and cluster state in parallel
+- **30-second investigations** — From alert to root cause with evidence chain and confidence score
+- **Safety-first remediation** — Five-tier safety model; every action requires human approval in Slack
+- **Data stays private** — Collector scrubs PII, tokens, and credentials before sending any data
 - **Runbook-guided** — Built-in playbooks for OOM kills, latency spikes, CrashLoopBackOff, and more
-- **Safety-first remediation** — Five-tier safety model with human approval via Slack
-- **Data stays internal** — The Collector runs in your cluster; sensitive data is scrubbed before leaving
-- **Webhook ingestion** — PagerDuty, Alertmanager, and custom webhooks out of the box
-- **Incident persistence** — Full audit trail with dashboard UI
+- **Works with your stack** — Prometheus, Elasticsearch/OpenSearch, CloudWatch, any K8s distribution
 
 ## Quick Links
 
-- [**Quick Start →**](getting-started/quickstart.md) Get running in 5 minutes with Docker Compose
-- [**Setup Guide →**](getting-started/setup-guide.md) Full production setup for your cluster
-- [**Architecture →**](architecture/overview.md) How the system works under the hood
-- [**API Reference →**](api/webhooks.md) Webhook and REST API docs
+- [**Quick Start →**](getting-started/quickstart.md) Install the Collector in 3 steps
+- [**Setup Guide →**](getting-started/setup-guide.md) Full production onboarding walkthrough
+- [**How Investigations Work →**](getting-started/first-investigation.md) What happens when Traced investigates
+- [**Architecture →**](architecture/overview.md) System design and data flow
+- [**Security & Privacy →**](getting-started/setup-guide.md#11-security-data-privacy) What data leaves your cluster

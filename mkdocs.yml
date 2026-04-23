@@ -67,24 +67,19 @@ nav:
   - Getting Started:
     - Quick Start: getting-started/quickstart.md
     - Setup Guide: getting-started/setup-guide.md
-    - First Investigation: getting-started/first-investigation.md
+    - How Investigations Work: getting-started/first-investigation.md
   - Architecture:
     - Overview: architecture/overview.md
     - Agents: architecture/agents.md
     - Safety Model: architecture/safety-model.md
   - Configuration:
-    - Environment Variables: configuration/environment.md
     - Runbooks: configuration/runbooks.md
-    - RBAC: configuration/rbac.md
-  - Deployment:
-    - Docker Compose: deployment/docker-compose.md
-    - Helm / Kubernetes: deployment/helm.md
+    - Approval Roles (RBAC): configuration/rbac.md
   - API Reference:
     - Webhooks: api/webhooks.md
     - Incidents API: api/incidents.md
-    - Collector API: api/collector.md
 
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/traced-ai/traced.ai
+      link: https://github.com/adityaatpeak/traced
