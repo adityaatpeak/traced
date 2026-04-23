@@ -1,0 +1,16 @@
+apiVersion: v2
+name: traced-collector
+description: Traced Collector — secure proxy connecting your observability stack to the Traced AI SRE platform
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - sre
+  - observability
+  - incident-response
+  - prometheus
+  - kubernetes
+home: https://traced.ai
+maintainers:
+  - name: Traced Team
+    email: support@traced.ai

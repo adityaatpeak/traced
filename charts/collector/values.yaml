@@ -1,0 +1,53 @@
+# Traced Collector — Helm Values
+# Minimum required: collectorApiKey, prometheus.url, elasticsearch.hosts
+
+# --- Collector API Key (provided by Traced team) ---
+collectorApiKey: ""
+
+# --- Image ---
+image:
+  repository: traced/collector
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+port: 8321
+
+# --- Observability Backends ---
+prometheus:
+  url: "http://prometheus-server.monitoring.svc:9090"
+
+elasticsearch:
+  hosts: "http://elasticsearch-master.logging.svc:9200"
+  apiKey: ""
+
+kubernetes:
+  inCluster: true
+
+cloudwatch:
+  enabled: false
+  region: "us-east-1"
+
+# --- Service Account ---
+serviceAccount:
+  # Set to false if you already created one via install/rbac.yaml
+  create: true
+  name: "traced-collector"
+  annotations: {}
+
+# --- Logging ---
+logLevel: "INFO"
+
+# --- Pod config ---
+nodeSelector: {}
+tolerations: []
+podAnnotations: {}

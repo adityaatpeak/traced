@@ -6,9 +6,9 @@ Get Traced investigating incidents in your cluster in 3 steps.
 
 ```bash
 kubectl create namespace traced
-kubectl apply -f https://traced.ai/install/rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/adityaatpeak/traced/main/install/rbac.yaml
 
-helm install traced-collector traced/collector \
+helm install traced-collector charts/collector/ \
   --namespace traced \
   --set collectorApiKey="<key-from-traced-team>" \
   --set prometheus.url="http://prometheus-server.monitoring.svc:9090" \

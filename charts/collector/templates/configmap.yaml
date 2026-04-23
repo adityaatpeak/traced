@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-collector-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: traced-collector
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  COLLECTOR_HOST: "0.0.0.0"
+  COLLECTOR_PORT: {{ .Values.port | quote }}
+  COLLECTOR_LOG_LEVEL: {{ .Values.logLevel | quote }}
+  PROMETHEUS_URL: {{ .Values.prometheus.url | quote }}
+  ELASTICSEARCH_HOSTS: {{ .Values.elasticsearch.hosts | quote }}
+  KUBERNETES_IN_CLUSTER: {{ .Values.kubernetes.inCluster | quote }}
+  CLOUDWATCH_ENABLED: {{ .Values.cloudwatch.enabled | quote }}
+  {{- if .Values.cloudwatch.enabled }}
+  CLOUDWATCH_REGION: {{ .Values.cloudwatch.region | quote }}
+  {{- end }}

@@ -1,0 +1,38 @@
+# Traced Collector — Remediation RBAC (Optional)
+# Apply with: kubectl apply -f https://traced.ai/install/rbac-remediation.yaml
+#
+# Grants the Collector permission to execute approved remediation actions:
+#   - Delete pods (triggers controller restart)
+#   - Patch deployments (scale replicas, trigger rollback)
+#
+# IMPORTANT: Traced NEVER executes these actions without human approval in Slack.
+# Every action is classified by risk tier and requires a team member to click "Approve".
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: traced-collector-remediation
+  labels:
+    app.kubernetes.io/name: traced
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["delete"]             # Pod restart (controller recreates the pod)
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["patch"]              # Scale replicas, trigger rollback
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: traced-collector-remediation
+  labels:
+    app.kubernetes.io/name: traced
+subjects:
+  - kind: ServiceAccount
+    name: traced-collector
+    namespace: traced
+roleRef:
+  kind: ClusterRole
+  name: traced-collector-remediation
+  apiGroup: rbac.authorization.k8s.io

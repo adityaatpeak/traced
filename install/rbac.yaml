@@ -1,0 +1,58 @@
+# Traced Collector — Kubernetes RBAC
+# Apply with: kubectl apply -f https://traced.ai/install/rbac.yaml
+#
+# This creates:
+#   - ServiceAccount: traced-collector (in namespace 'traced')
+#   - ClusterRole: traced-collector-readonly (read-only investigation access)
+#   - ClusterRoleBinding to link them
+#
+# For remediation permissions (pod restart, rollback, scale), also apply:
+#   kubectl apply -f https://traced.ai/install/rbac-remediation.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: traced
+  labels:
+    app.kubernetes.io/name: traced
+    app.kubernetes.io/component: collector
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traced-collector
+  namespace: traced
+  labels:
+    app.kubernetes.io/name: traced
+    app.kubernetes.io/component: collector
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: traced-collector-readonly
+  labels:
+    app.kubernetes.io/name: traced
+rules:
+  # Core resources for investigation
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "events", "configmaps", "nodes", "services"]
+    verbs: ["get", "list", "watch"]
+  # Workload resources
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: traced-collector-readonly
+  labels:
+    app.kubernetes.io/name: traced
+subjects:
+  - kind: ServiceAccount
+    name: traced-collector
+    namespace: traced
+roleRef:
+  kind: ClusterRole
+  name: traced-collector-readonly
+  apiGroup: rbac.authorization.k8s.io

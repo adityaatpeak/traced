@@ -168,7 +168,7 @@ kubectl apply -f traced-remediation-rbac.yaml
 You'll receive a **Collector API key** and a **Cloud endpoint URL** from the Traced team during onboarding.
 
 ```bash
-helm install traced-collector traced/collector \
+helm install traced-collector charts/collector/ \
   --namespace traced \
   --set collectorApiKey="<your-collector-api-key>" \
   --set cloudEndpoint="https://cloud.traced.ai" \
