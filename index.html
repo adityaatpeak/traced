@@ -3,179 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traced — AI SRE | From Alert to Root Cause to Fix</title>
-  <meta name="description" content="Multi-agent AI system that investigates production incidents in minutes, not hours. Data stays in your environment.">
+  <title>Traced — AI-Powered SRE Platform</title>
+  <meta name="description" content="AI-powered SRE platform that investigates production incidents in minutes. Multi-agent, Slack-native, safety-first.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fafafa;
-      --surface: #ffffff;
+      --bg: #ffffff;
+      --bg-soft: #f7f7f8;
       --text: #1a1a2e;
-      --text-secondary: #555770;
-      --accent: #2563eb;
-      --accent-light: #eff4ff;
-      --green: #059669;
-      --orange: #d97706;
-      --red: #dc2626;
-      --purple: #7c3aed;
-      --border: #e5e7eb;
-      --radius: 12px;
-      --max-w: 1080px;
+      --text-secondary: #5c5c70;
+      --text-muted: #9393a5;
+      --accent-1: #6366f1;
+      --accent-2: #8b5cf6;
+      --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      --gradient-subtle: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #faf5ff 100%);
+      --border: #e5e5ea;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --max-w: 1140px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg: 0 4px 24px rgba(99,102,241,.12);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
     }
 
     /* ── Nav ── */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(250,250,250,.85);
-      backdrop-filter: blur(12px);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
     .nav-inner {
       max-width: var(--max-w); margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px;
+      padding: 16px 32px;
     }
-    .logo { font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -.02em; }
-    .logo span { color: var(--accent); }
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -.02em; }
+    .logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
-    .nav-links a:hover { color: var(--accent); }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--accent-1); }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+    .nav-login { color: var(--text-secondary); text-decoration: none; font-size: .875rem; font-weight: 500; }
+    .nav-login:hover { color: var(--accent-1); }
     .nav-cta {
-      background: var(--accent); color: #fff; border: none; padding: 8px 20px;
-      border-radius: 8px; font-size: .875rem; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: background .2s;
+      background: var(--gradient); color: #fff; text-decoration: none;
+      font-size: .85rem; font-weight: 600; padding: 10px 22px;
+      border-radius: 10px; transition: opacity .2s;
     }
-    .nav-cta:hover { background: #1d4ed8; }
+    .nav-cta:hover { opacity: .9; }
 
     /* ── Hero ── */
     .hero {
-      max-width: var(--max-w); margin: 0 auto;
-      padding: 100px 24px 80px;
-      text-align: center;
+      position: relative; overflow: hidden;
+      padding: 160px 32px 100px;
+      background: linear-gradient(160deg, #0f0a2e 0%, #1e1252 40%, #3b1f7a 70%, #6d28d9 100%);
+      color: #fff; text-align: center;
     }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 70%, rgba(139,92,246,.25) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(99,102,241,.2) 0%, transparent 50%);
+      animation: drift 20s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-2%, 2%); }
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
     .hero-badge {
-      display: inline-block; padding: 6px 16px;
-      background: var(--accent-light); color: var(--accent);
-      border-radius: 20px; font-size: .8rem; font-weight: 600;
-      margin-bottom: 24px; letter-spacing: .02em;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 100px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.85);
+      margin-bottom: 28px; backdrop-filter: blur(8px);
     }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #a78bfa; }
     .hero h1 {
-      font-size: clamp(2.25rem, 5vw, 3.5rem);
-      font-weight: 800; line-height: 1.15;
+      font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+      font-weight: 800; line-height: 1.1;
       letter-spacing: -.03em; margin-bottom: 20px;
     }
-    .hero h1 em { font-style: normal; color: var(--accent); }
     .hero p {
-      font-size: 1.15rem; color: var(--text-secondary);
-      max-width: 620px; margin: 0 auto 36px;
+      font-size: 1.1rem; color: rgba(255,255,255,.7);
+      max-width: 540px; margin: 0 auto 36px;
+      line-height: 1.7;
     }
-    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      background: var(--accent); color: #fff; padding: 12px 28px;
-      border-radius: 8px; font-size: 1rem; font-weight: 600;
-      text-decoration: none; transition: background .2s;
+    .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-hero {
+      padding: 14px 32px; border-radius: 12px;
+      font-size: .9rem; font-weight: 600; text-decoration: none;
+      transition: all .2s;
     }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-secondary {
-      background: var(--surface); color: var(--text); padding: 12px 28px;
-      border-radius: 8px; font-size: 1rem; font-weight: 600;
-      text-decoration: none; border: 1px solid var(--border); transition: border-color .2s;
-    }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-white { background: #fff; color: var(--text); }
+    .btn-white:hover { background: #f3f3f5; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.25); }
+    .btn-outline:hover { border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.06); }
 
     /* ── Section shared ── */
-    section { max-width: var(--max-w); margin: 0 auto; padding: 80px 24px; }
-    .section-label {
-      font-size: .75rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+    .section { max-width: var(--max-w); margin: 0 auto; padding: 100px 32px; }
+    .section-tag {
+      display: inline-block; font-size: .75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--accent-1); background: #eef2ff;
+      padding: 6px 14px; border-radius: 6px;
+      margin-bottom: 16px;
     }
-    section h2 {
-      font-size: 2rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 16px;
+    .section h2 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 14px; line-height: 1.15;
     }
-    section > p { color: var(--text-secondary); max-width: 600px; margin-bottom: 48px; }
+    .section > p.sub {
+      font-size: 1.05rem; color: var(--text-secondary);
+      max-width: 560px; line-height: 1.7; margin-bottom: 56px;
+    }
+    .section.centered { text-align: center; }
+    .section.centered > p.sub { margin-left: auto; margin-right: auto; }
 
     /* ── How It Works ── */
-    .flow {
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 72px 1fr; gap: 24px;
+      padding: 32px 0; border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--gradient-subtle);
       display: flex; align-items: center; justify-content: center;
-      gap: 0; flex-wrap: wrap; margin-bottom: 24px;
+      font-size: 1.1rem; font-weight: 800; color: var(--accent-1);
     }
-    .flow-step {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px 22px;
-      text-align: center; min-width: 140px; flex: 0 1 auto;
-    }
-    .flow-step .step-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--accent-light); color: var(--accent);
-      font-size: .75rem; font-weight: 700; margin-bottom: 8px;
-    }
-    .flow-step h4 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
-    .flow-step p { font-size: .78rem; color: var(--text-secondary); }
-    .flow-arrow {
-      font-size: 1.4rem; color: var(--border); padding: 0 4px;
-      flex-shrink: 0;
-    }
+    .step-text h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+    .step-text p { font-size: .9rem; color: var(--text-secondary); line-height: 1.7; max-width: 500px; }
 
-    /* ── Differentiators ── */
-    .diff-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    /* ── Feature cards ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-    .diff-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px;
+    .feat-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      transition: all .25s;
     }
-    .diff-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-    .diff-card p { font-size: .875rem; color: var(--text-secondary); }
-    .diff-num {
-      font-size: .7rem; font-weight: 700; color: var(--accent);
-      margin-bottom: 12px; letter-spacing: .05em;
+    .feat-card:hover { border-color: var(--accent-1); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .feat-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--gradient-subtle);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 20px;
     }
+    .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feat-card p { font-size: .875rem; color: var(--text-secondary); line-height: 1.7; }
+
+    /* ── Why cards ── */
+    .why-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .why-card {
+      background: var(--bg-soft); border-radius: var(--radius);
+      padding: 40px; transition: all .25s;
+      border: 1px solid transparent;
+    }
+    .why-card:hover { border-color: var(--border); background: var(--bg); box-shadow: var(--shadow); }
+    .why-num {
+      font-size: .72rem; font-weight: 700; color: var(--accent-2);
+      letter-spacing: .06em; margin-bottom: 16px;
+    }
+    .why-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+    .why-card p { font-size: .9rem; color: var(--text-secondary); line-height: 1.7; }
 
     /* ── Integrations ── */
-    .integrations-row {
-      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+    .int-grid {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: center;
     }
-    .integration-chip {
+    .int-chip {
       display: flex; align-items: center; gap: 10px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 14px 22px;
-      font-size: .9rem; font-weight: 600;
-      transition: border-color .2s;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 24px;
+      font-size: .875rem; font-weight: 600; transition: all .2s;
     }
-    .integration-chip:hover { border-color: var(--accent); }
-    .int-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .int-chip:hover { border-color: var(--accent-1); box-shadow: var(--shadow-lg); }
+    .int-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* ── Data Safe banner ── */
+    .safe-banner {
+      background: var(--gradient-subtle);
+      border: 1px solid #e0e0f0;
+      border-radius: var(--radius);
+      padding: 56px;
+      text-align: center;
+      max-width: var(--max-w); margin: 0 auto 0;
+    }
+    .safe-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--gradient);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: #fff; margin-bottom: 20px;
+    }
+    .safe-banner h3 {
+      font-size: 1.5rem; font-weight: 800; margin-bottom: 12px;
+      letter-spacing: -.01em;
+    }
+    .safe-banner p {
+      font-size: .95rem; color: var(--text-secondary);
+      max-width: 480px; margin: 0 auto; line-height: 1.7;
+    }
 
     /* ── CTA ── */
     .cta-section {
-      text-align: center; padding: 80px 24px;
+      text-align: center; padding: 100px 32px;
       max-width: var(--max-w); margin: 0 auto;
     }
-    .cta-section h2 { margin-bottom: 16px; }
-    .cta-section p { color: var(--text-secondary); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-section h2 {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 16px;
+    }
+    .cta-section p {
+      font-size: 1.05rem; color: var(--text-secondary);
+      max-width: 440px; margin: 0 auto 36px; line-height: 1.7;
+    }
+    .btn-gradient {
+      display: inline-block; background: var(--gradient);
+      color: #fff; padding: 16px 36px; border-radius: 12px;
+      font-size: .95rem; font-weight: 600; text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-gradient:hover { opacity: .9; transform: translateY(-1px); box-shadow: var(--shadow-lg); }
 
     /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center; font-size: .825rem; color: var(--text-secondary);
+      padding: 32px;
+      max-width: var(--max-w); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    footer a { color: var(--accent); text-decoration: none; }
+    footer .f-brand { font-size: .8rem; font-weight: 600; color: var(--text-muted); }
+    footer .f-links { display: flex; gap: 24px; }
+    footer .f-links a { font-size: .8rem; color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    footer .f-links a:hover { color: var(--accent-1); }
+
+    /* ── Scroll animation ── */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ── Responsive ── */
-    @media (max-width: 700px) {
-      .nav-links { display: none; }
-      .flow { flex-direction: column; }
-      .flow-arrow { transform: rotate(90deg); }
+    @media (max-width: 768px) {
+      .nav-links, .nav-login { display: none; }
+      .nav-inner { padding: 14px 20px; }
+      .hero { padding: 140px 20px 80px; }
+      .section { padding: 72px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 52px 1fr; gap: 16px; }
+      .safe-banner { padding: 36px 24px; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+      footer .f-links { justify-content: center; }
     }
   </style>
 </head>
@@ -184,127 +283,207 @@
 <!-- Nav -->
 <nav>
   <div class="nav-inner">
-    <a href="#" class="logo"><span>traced</span>.ai</a>
+    <a href="#" class="logo"><span>Traced</span></a>
     <ul class="nav-links">
       <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="#why-traced">Why Traced</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#why">Why Traced</a></li>
       <li><a href="#integrations">Integrations</a></li>
     </ul>
-    <a href="https://github.com/aditya-singh/traced.ai" class="nav-cta" target="_blank">View on GitHub</a>
+    <div class="nav-right">
+      <a href="#" class="nav-login">Log in</a>
+      <a href="#cta" class="nav-cta">Get a Demo</a>
+    </div>
   </div>
 </nav>
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">OPEN SOURCE &middot; MULTI-AGENT &middot; PRIVACY-FIRST</div>
-  <h1>From alert to root cause to fix —<br><em>in minutes, not hours.</em></h1>
-  <p>Traced is a multi-agent AI SRE that investigates production incidents autonomously. It lives in Slack, queries your observability stack, inspects your clusters, and suggests fixes — all while your data stays inside your environment.</p>
-  <div class="hero-buttons">
-    <a href="https://github.com/aditya-singh/traced.ai" class="btn-primary" target="_blank">Get Started</a>
-    <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now in Early Access
+    </div>
+    <h1>AI-Powered Incident Response for Platform Teams</h1>
+    <p>Traced dispatches specialist AI agents to investigate production incidents in parallel, synthesize root cause, and suggest fixes — all from Slack. Minutes, not hours.</p>
+    <div class="hero-buttons">
+      <a href="#cta" class="btn-hero btn-white">Request Early Access</a>
+      <a href="#how-it-works" class="btn-hero btn-outline">See How It Works</a>
+    </div>
   </div>
 </div>
 
 <!-- How It Works -->
-<section id="how-it-works">
-  <div class="section-label">How It Works</div>
-  <h2>Alert to resolution in one Slack thread</h2>
-  <p>Tag @traced in Slack when an incident fires. AI agents investigate in parallel, synthesize findings, and present a fix — all in under 10 minutes.</p>
+<div class="section" id="how-it-works">
+  <div class="section-tag">How It Works</div>
+  <h2>From Alert to Resolution<br>in One Slack Thread</h2>
+  <p class="sub">An alert fires. Traced takes it from there — investigating, correlating, and recommending a fix before your team finishes triaging.</p>
 
-  <div class="flow">
-    <div class="flow-step">
+  <div class="steps">
+    <div class="step reveal">
       <div class="step-num">1</div>
-      <h4>Alert Fires</h4>
-      <p>Tag @traced in Slack</p>
+      <div class="step-text">
+        <h3>Alert Triggers Investigation</h3>
+        <p>PagerDuty, Alertmanager, or any custom webhook fires. Traced ingests the alert, deduplicates it, and matches it against built-in runbooks for common incident patterns.</p>
+      </div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
+    <div class="step reveal">
       <div class="step-num">2</div>
-      <h4>Investigate</h4>
-      <p>Agents query metrics, logs, K8s</p>
+      <div class="step-text">
+        <h3>Agents Investigate in Parallel</h3>
+        <p>Specialist AI agents fan out simultaneously — querying Prometheus metrics, searching Elasticsearch logs, inspecting Kubernetes state, and checking recent deployments.</p>
+      </div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
+    <div class="step reveal">
       <div class="step-num">3</div>
-      <h4>Root Cause</h4>
-      <p>Correlate signals, rank hypotheses</p>
+      <div class="step-text">
+        <h3>Root Cause Synthesized</h3>
+        <p>Findings are correlated across all sources. Claude reasons through the evidence, ranks hypotheses by confidence, and builds a timeline of events leading to the incident.</p>
+      </div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
+    <div class="step reveal">
       <div class="step-num">4</div>
-      <h4>Suggest Fix</h4>
-      <p>With blast radius + evidence</p>
+      <div class="step-text">
+        <h3>Fix Suggested with Evidence</h3>
+        <p>A specific remediation is proposed in Slack with blast radius assessment, safety tier classification, and the full evidence chain supporting the recommendation.</p>
+      </div>
     </div>
-    <div class="flow-arrow">&rarr;</div>
-    <div class="flow-step">
+    <div class="step reveal">
       <div class="step-num">5</div>
-      <h4>Approve & Execute</h4>
-      <p>One click in Slack, verified</p>
+      <div class="step-text">
+        <h3>Approve, Execute, Verify</h3>
+        <p>One click in Slack. The fix is executed, verified against live metrics, and a resolution summary is posted to the thread. The full incident is stored for future learning.</p>
+      </div>
     </div>
   </div>
-</section>
+</div>
+
+<!-- Features -->
+<div class="section centered" id="features" style="background: var(--bg-soft); padding-left: 0; padding-right: 0; max-width: 100%;">
+  <div style="max-width: var(--max-w); margin: 0 auto; padding: 0 32px;">
+    <div class="section-tag">Platform</div>
+    <h2>Everything You Need to Automate<br>Incident Response</h2>
+    <p class="sub">Built for platform teams running Kubernetes in production. Every feature is designed to reduce MTTR and free your engineers from firefighting.</p>
+
+    <div class="features-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#9889;</div>
+        <h3>Alert Ingestion</h3>
+        <p>Native webhooks for PagerDuty, Alertmanager, and a generic endpoint for any monitoring tool. Built-in deduplication prevents alert storms.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#128214;</div>
+        <h3>Runbook Engine</h3>
+        <p>Pre-built runbooks for OOM kills, high latency, CrashLoopBackOff, disk pressure, certificate expiry, and connection exhaustion. Add your own in YAML.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#128202;</div>
+        <h3>Incident Dashboard</h3>
+        <p>Web UI for browsing investigations, viewing agent findings, and tracking remediation status. Filter by severity, status, or affected service.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#128274;</div>
+        <h3>RBAC &amp; Approvals</h3>
+        <p>Role-based access with viewer, responder, and admin tiers. Map Slack users to roles and control who can approve each action level.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#9881;</div>
+        <h3>Parallel Agents</h3>
+        <p>Observability, Kubernetes, and change detection agents run simultaneously. Root cause in minutes, not the hours it takes to check each dashboard.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">&#128451;</div>
+        <h3>Incident Memory</h3>
+        <p>Every investigation is stored with full context — findings, actions taken, verification results. Build institutional knowledge that persists across team changes.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Why Traced -->
-<section id="why-traced">
-  <div class="section-label">Why Traced</div>
-  <h2>Built different from existing AIOps</h2>
-  <p>Existing AIOps tools are either too shallow, too opaque, or force your data out of your environment. We built something better.</p>
+<div class="section" id="why">
+  <div class="section-tag">Why Traced</div>
+  <h2>Built Different from Existing AIOps</h2>
+  <p class="sub">Most AIOps tools are too shallow, too opaque, or force your sensitive data out of your environment. We built something better.</p>
 
-  <div class="diff-grid">
-    <div class="diff-card">
-      <div class="diff-num">01</div>
-      <h3>Data Stays Internal</h3>
-      <p>Your production data — logs, metrics, traces — never leaves your environment. Only summarized investigation context goes to the LLM. Critical for regulated industries.</p>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-num">01</div>
+      <h3>Your Data Stays Inside Your Walls</h3>
+      <p>The collector runs in your cluster. Sensitive data is filtered before it ever leaves. Only summarized investigation context reaches the AI. Built for teams that take compliance seriously.</p>
     </div>
-    <div class="diff-card">
-      <div class="diff-num">02</div>
-      <h3>Multi-Agent, Not Monolith</h3>
-      <p>Specialist agents you can extend, swap, or add to. Not a black box — an open architecture your team can customize for your stack.</p>
+    <div class="why-card reveal">
+      <div class="why-num">02</div>
+      <h3>Transparent Agents, Not a Black Box</h3>
+      <p>Specialist agents for observability, Kubernetes, and change detection — each shows its work with full evidence chains, transparent reasoning, and auditable decisions.</p>
     </div>
-    <div class="diff-card">
-      <div class="diff-num">03</div>
-      <h3>Slack-Native UX</h3>
-      <p>Zero new dashboards. Investigations happen where your team already communicates. Tag @traced and follow along in the thread.</p>
+    <div class="why-card reveal">
+      <div class="why-num">03</div>
+      <h3>Slack-Native from Day One</h3>
+      <p>Investigations happen in Slack threads with Block Kit interactions. Approve fixes, view timelines, follow progress in real time. Zero new dashboards to learn.</p>
     </div>
-    <div class="diff-card">
-      <div class="diff-num">04</div>
-      <h3>Parallel Investigation</h3>
-      <p>Specialist agents run simultaneously — metrics, logs, K8s state, and change history are queried at once, not sequentially. Target: root cause in under 10 minutes.</p>
+    <div class="why-card reveal">
+      <div class="why-num">04</div>
+      <h3>Safety-First Remediation</h3>
+      <p>Every action is classified by risk — from read-only to high-risk. Dangerous operations are never automated. Role-based approvals ensure the right people sign off.</p>
     </div>
   </div>
-</section>
+</div>
 
 <!-- Integrations -->
-<section id="integrations">
-  <div class="section-label">Integrations</div>
-  <h2>Works with the tools you already use</h2>
-  <p>Traced plugs into your existing observability, infrastructure, and communication stack. No new dashboards to learn.</p>
+<div class="section centered" id="integrations">
+  <div class="section-tag">Integrations</div>
+  <h2>Connects to Your Existing Stack</h2>
+  <p class="sub">Traced plugs into the tools your team already uses. No rip-and-replace — deploy alongside your current workflow.</p>
 
-  <div class="integrations-row">
-    <div class="integration-chip"><div class="int-dot" style="background: var(--red);"></div>Metrics &amp; Monitoring</div>
-    <div class="integration-chip"><div class="int-dot" style="background: var(--green);"></div>Logs &amp; Search</div>
-    <div class="integration-chip"><div class="int-dot" style="background: var(--orange);"></div>Cloud Services</div>
-    <div class="integration-chip"><div class="int-dot" style="background: var(--accent);"></div>Container Orchestration</div>
-    <div class="integration-chip"><div class="int-dot" style="background: #333;"></div>CI/CD Pipelines</div>
-    <div class="integration-chip"><div class="int-dot" style="background: var(--purple);"></div>Team Communication</div>
+  <div class="int-grid">
+    <div class="int-chip reveal"><div class="int-dot" style="background:#e74c3c;"></div>Prometheus</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#00bcd4;"></div>Elasticsearch</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#326ce5;"></div>Kubernetes</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#ff9900;"></div>CloudWatch</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#06ac38;"></div>PagerDuty</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#f63d63;"></div>Alertmanager</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#4a154b;"></div>Slack</div>
+    <div class="int-chip reveal"><div class="int-dot" style="background:#888;"></div>Custom Webhooks</div>
   </div>
-</section>
+</div>
+
+<!-- Data Safe -->
+<div class="section" style="padding-top: 0;">
+  <div class="safe-banner reveal">
+    <div class="safe-icon">&#128737;</div>
+    <h3>Your Data Isn't Our Business. Keeping It Safe Is.</h3>
+    <p>The Traced collector deploys inside your Kubernetes cluster. All raw data — logs, metrics, cluster state — is processed locally and filtered before anything leaves. Only summarized investigation context reaches the AI.</p>
+  </div>
+</div>
 
 <!-- CTA -->
-<div class="cta-section">
-  <div class="section-label">Get Started</div>
-  <h2>Ready to ship faster, sleep better?</h2>
-  <p>Traced is open source. Deploy it in your cluster, connect your observability stack, and start investigating incidents with AI in minutes.</p>
-  <div class="hero-buttons">
-    <a href="https://github.com/aditya-singh/traced.ai" class="btn-primary" target="_blank">View on GitHub</a>
-  </div>
+<div class="cta-section" id="cta">
+  <div class="section-tag">Get Started</div>
+  <h2>Ready to Ship Faster and Sleep Better?</h2>
+  <p>Traced is currently onboarding platform teams running Kubernetes in production. Request early access and see it in action.</p>
+  <a href="mailto:aditya.singh@uipath.com?subject=Traced Early Access Request" class="btn-gradient">Request Early Access</a>
 </div>
 
 <!-- Footer -->
 <footer>
-  <p><strong>traced.ai</strong> &mdash; Open-source AI SRE by <a href="https://github.com/aditya-singh" target="_blank">Aditya Singh</a></p>
-  <p style="margin-top: 8px;">Built with Claude &middot; Deployed on GitHub Pages</p>
+  <div class="f-brand">Traced &mdash; AI-Powered SRE Platform &copy; 2026</div>
+  <div class="f-links">
+    <a href="mailto:aditya.singh@uipath.com">Contact</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#features">Features</a>
+  </div>
 </footer>
+
+<!-- Scroll reveal -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
