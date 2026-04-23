@@ -1,0 +1,90 @@
+site_name: Traced — AI SRE Documentation
+site_description: Multi-agent AI system for automated production incident investigation
+site_url: https://adityaatpeak.github.io/traced/docs
+repo_url: https://github.com/adityaatpeak/traced
+repo_name: adityaatpeak/traced
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.svg
+  favicon: assets/favicon.png
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: getting-started/quickstart.md
+    - Setup Guide: getting-started/setup-guide.md
+    - First Investigation: getting-started/first-investigation.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Agents: architecture/agents.md
+    - Safety Model: architecture/safety-model.md
+  - Configuration:
+    - Environment Variables: configuration/environment.md
+    - Runbooks: configuration/runbooks.md
+    - RBAC: configuration/rbac.md
+  - Deployment:
+    - Docker Compose: deployment/docker-compose.md
+    - Helm / Kubernetes: deployment/helm.md
+  - API Reference:
+    - Webhooks: api/webhooks.md
+    - Incidents API: api/incidents.md
+    - Collector API: api/collector.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/traced-ai/traced.ai

@@ -1,0 +1,46 @@
+name: Deploy Site + Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'index.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install MkDocs and plugins
+        run: |
+          pip install \
+            mkdocs-material \
+            mkdocs-minify-plugin \
+            pymdown-extensions
+
+      - name: Build MkDocs into docs/ subdirectory
+        run: mkdocs build --site-dir site/docs
+
+      - name: Copy landing page to site root
+        run: cp index.html site/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
