@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traced — AI SRE | From Alert to Root Cause to Fix</title>
+  <meta name="description" content="Multi-agent AI system that investigates production incidents in minutes, not hours. Data stays in your environment.">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --text-secondary: #555770;
+      --accent: #2563eb;
+      --accent-light: #eff4ff;
+      --green: #059669;
+      --orange: #d97706;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --border: #e5e7eb;
+      --radius: 12px;
+      --max-w: 1080px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,250,250,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px;
+    }
+    .logo { font-size: 1.25rem; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -.02em; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff; border: none; padding: 8px 20px;
+      border-radius: 8px; font-size: .875rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: background .2s;
+    }
+    .nav-cta:hover { background: #1d4ed8; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: var(--max-w); margin: 0 auto;
+      padding: 100px 24px 80px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block; padding: 6px 16px;
+      background: var(--accent-light); color: var(--accent);
+      border-radius: 20px; font-size: .8rem; font-weight: 600;
+      margin-bottom: 24px; letter-spacing: .02em;
+    }
+    .hero h1 {
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -.03em; margin-bottom: 20px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p {
+      font-size: 1.15rem; color: var(--text-secondary);
+      max-width: 620px; margin: 0 auto 36px;
+    }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff; padding: 12px 28px;
+      border-radius: 8px; font-size: 1rem; font-weight: 600;
+      text-decoration: none; transition: background .2s;
+    }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary {
+      background: var(--surface); color: var(--text); padding: 12px 28px;
+      border-radius: 8px; font-size: 1rem; font-weight: 600;
+      text-decoration: none; border: 1px solid var(--border); transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Section shared ── */
+    section { max-width: var(--max-w); margin: 0 auto; padding: 80px 24px; }
+    .section-label {
+      font-size: .75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+    }
+    section h2 {
+      font-size: 2rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 16px;
+    }
+    section > p { color: var(--text-secondary); max-width: 600px; margin-bottom: 48px; }
+
+    /* ── How It Works ── */
+    .flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .flow-step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 22px;
+      text-align: center; min-width: 140px; flex: 0 1 auto;
+    }
+    .flow-step .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent-light); color: var(--accent);
+      font-size: .75rem; font-weight: 700; margin-bottom: 8px;
+    }
+    .flow-step h4 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+    .flow-step p { font-size: .78rem; color: var(--text-secondary); }
+    .flow-arrow {
+      font-size: 1.4rem; color: var(--border); padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── Differentiators ── */
+    .diff-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .diff-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+    }
+    .diff-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .diff-card p { font-size: .875rem; color: var(--text-secondary); }
+    .diff-num {
+      font-size: .7rem; font-weight: 700; color: var(--accent);
+      margin-bottom: 12px; letter-spacing: .05em;
+    }
+
+    /* ── Integrations ── */
+    .integrations-row {
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+    }
+    .integration-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 22px;
+      font-size: .9rem; font-weight: 600;
+      transition: border-color .2s;
+    }
+    .integration-chip:hover { border-color: var(--accent); }
+    .int-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center; padding: 80px 24px;
+      max-width: var(--max-w); margin: 0 auto;
+    }
+    .cta-section h2 { margin-bottom: 16px; }
+    .cta-section p { color: var(--text-secondary); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center; font-size: .825rem; color: var(--text-secondary);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo"><span>traced</span>.ai</a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#why-traced">Why Traced</a></li>
+      <li><a href="#integrations">Integrations</a></li>
+    </ul>
+    <a href="https://github.com/aditya-singh/traced.ai" class="nav-cta" target="_blank">View on GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">OPEN SOURCE &middot; MULTI-AGENT &middot; PRIVACY-FIRST</div>
+  <h1>From alert to root cause to fix —<br><em>in minutes, not hours.</em></h1>
+  <p>Traced is a multi-agent AI SRE that investigates production incidents autonomously. It lives in Slack, queries your observability stack, inspects your clusters, and suggests fixes — all while your data stays inside your environment.</p>
+  <div class="hero-buttons">
+    <a href="https://github.com/aditya-singh/traced.ai" class="btn-primary" target="_blank">Get Started</a>
+    <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+  </div>
+</div>
+
+<!-- How It Works -->
+<section id="how-it-works">
+  <div class="section-label">How It Works</div>
+  <h2>Alert to resolution in one Slack thread</h2>
+  <p>Tag @traced in Slack when an incident fires. AI agents investigate in parallel, synthesize findings, and present a fix — all in under 10 minutes.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <h4>Alert Fires</h4>
+      <p>Tag @traced in Slack</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <h4>Investigate</h4>
+      <p>Agents query metrics, logs, K8s</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <h4>Root Cause</h4>
+      <p>Correlate signals, rank hypotheses</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <h4>Suggest Fix</h4>
+      <p>With blast radius + evidence</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <h4>Approve & Execute</h4>
+      <p>One click in Slack, verified</p>
+    </div>
+  </div>
+</section>
+
+<!-- Why Traced -->
+<section id="why-traced">
+  <div class="section-label">Why Traced</div>
+  <h2>Built different from existing AIOps</h2>
+  <p>Existing AIOps tools are either too shallow, too opaque, or force your data out of your environment. We built something better.</p>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-num">01</div>
+      <h3>Data Stays Internal</h3>
+      <p>Your production data — logs, metrics, traces — never leaves your environment. Only summarized investigation context goes to the LLM. Critical for regulated industries.</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">02</div>
+      <h3>Multi-Agent, Not Monolith</h3>
+      <p>Specialist agents you can extend, swap, or add to. Not a black box — an open architecture your team can customize for your stack.</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">03</div>
+      <h3>Slack-Native UX</h3>
+      <p>Zero new dashboards. Investigations happen where your team already communicates. Tag @traced and follow along in the thread.</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">04</div>
+      <h3>Parallel Investigation</h3>
+      <p>Specialist agents run simultaneously — metrics, logs, K8s state, and change history are queried at once, not sequentially. Target: root cause in under 10 minutes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Integrations -->
+<section id="integrations">
+  <div class="section-label">Integrations</div>
+  <h2>Works with the tools you already use</h2>
+  <p>Traced plugs into your existing observability, infrastructure, and communication stack. No new dashboards to learn.</p>
+
+  <div class="integrations-row">
+    <div class="integration-chip"><div class="int-dot" style="background: var(--red);"></div>Metrics &amp; Monitoring</div>
+    <div class="integration-chip"><div class="int-dot" style="background: var(--green);"></div>Logs &amp; Search</div>
+    <div class="integration-chip"><div class="int-dot" style="background: var(--orange);"></div>Cloud Services</div>
+    <div class="integration-chip"><div class="int-dot" style="background: var(--accent);"></div>Container Orchestration</div>
+    <div class="integration-chip"><div class="int-dot" style="background: #333;"></div>CI/CD Pipelines</div>
+    <div class="integration-chip"><div class="int-dot" style="background: var(--purple);"></div>Team Communication</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="section-label">Get Started</div>
+  <h2>Ready to ship faster, sleep better?</h2>
+  <p>Traced is open source. Deploy it in your cluster, connect your observability stack, and start investigating incidents with AI in minutes.</p>
+  <div class="hero-buttons">
+    <a href="https://github.com/aditya-singh/traced.ai" class="btn-primary" target="_blank">View on GitHub</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p><strong>traced.ai</strong> &mdash; Open-source AI SRE by <a href="https://github.com/aditya-singh" target="_blank">Aditya Singh</a></p>
+  <p style="margin-top: 8px;">Built with Claude &middot; Deployed on GitHub Pages</p>
+</footer>
+
+</body>
+</html>
